@@ -1,0 +1,30 @@
+
+
+.
+
+🧠 AI Summarizer Web Application
+
+The AI Summarizer is a full-stack web application that allows users to generate concise summaries from text input, PDF documents, and YouTube videos. The application extracts content from multiple sources, processes it using an AI-powered summarization model, and presents a clear, readable summary through an intuitive user interface.
+
+The system is designed with a modular architecture, separating the frontend and backend to ensure scalability and maintainability. It supports file uploads, API-based text processing, and real-time interaction between client and server.
+
+🛠️ Technologies & Languages Used
+Frontend
+
+HTML5 – Structure of the web interface
+
+CSS3 – Styling and responsive layout
+
+JavaScript (ES6) – Client-side logic
+
+React.js – Building a dynamic and interactive user interface
+
+Axios – Handling HTTP requests to the backend
+
+Backend
+
+Python – Core backend programming language
+
+Flask – Lightweight web framework for API development
+
+Flask-CORS – Handling cross-origin requests between frontend and backend
