@@ -3,11 +3,11 @@ import axios from "axios";
 import "./App.css";
 
 function App() {
+  const [mode, setMode] = useState("text");
   const [text, setText] = useState("");
-  const [summary, setSummary] = useState("");
   const [file, setFile] = useState(null);
   const [youtubeURL, setYoutubeURL] = useState("");
-  const [mode, setMode] = useState("text");
+  const [summary, setSummary] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSummarize = async () => {
@@ -18,39 +18,22 @@ function App() {
       let res;
 
       if (mode === "text") {
-        if (!text.trim()) {
-          setLoading(false);
-          return alert("Please enter some text.");
-        }
-
-        res = await axios.post(
-          "http://localhost:5000/summarize/text",
-          { text }
-        );
+        res = await axios.post("http://localhost:5000/summarize/text", {
+          text,
+        });
       }
 
-      else if (mode === "pdf") {
-        if (!file) {
-          setLoading(false);
-          return alert("Please upload a PDF file.");
-        }
-
+      if (mode === "pdf") {
         const formData = new FormData();
         formData.append("file", file);
 
-        // IMPORTANT: no headers here
         res = await axios.post(
           "http://localhost:5000/summarize/pdf",
           formData
         );
       }
 
-      else if (mode === "youtube") {
-        if (!youtubeURL.trim()) {
-          setLoading(false);
-          return alert("Please enter a YouTube URL.");
-        }
-
+      if (mode === "youtube") {
         res = await axios.post(
           "http://localhost:5000/summarize/youtube",
           { url: youtubeURL }
@@ -60,8 +43,11 @@ function App() {
       setSummary(res.data.summary);
 
     } catch (err) {
-      console.error("Frontend error:", err);
-      alert("Something went wrong.");
+      if (err.response?.data?.summary) {
+        setSummary(err.response.data.summary);
+      } else {
+        setSummary("❌ Something went wrong.");
+      }
     }
 
     setLoading(false);
@@ -72,21 +58,14 @@ function App() {
       <h1>🧠 AI Summarizer (Text, PDF & YouTube)</h1>
 
       <div className="mode-buttons">
-        <button className={mode === "text" ? "active" : ""} onClick={() => setMode("text")}>
-          Text
-        </button>
-        <button className={mode === "pdf" ? "active" : ""} onClick={() => setMode("pdf")}>
-          PDF
-        </button>
-        <button className={mode === "youtube" ? "active" : ""} onClick={() => setMode("youtube")}>
-          YouTube
-        </button>
+        <button onClick={() => setMode("text")}>Text</button>
+        <button onClick={() => setMode("pdf")}>PDF</button>
+        <button onClick={() => setMode("youtube")}>YouTube</button>
       </div>
 
       {mode === "text" && (
         <textarea
-          placeholder="Paste your text here..."
-          rows="10"
+          placeholder="Enter text here..."
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
@@ -103,7 +82,7 @@ function App() {
       {mode === "youtube" && (
         <input
           type="text"
-          placeholder="Enter YouTube video URL..."
+          placeholder="Enter YouTube URL"
           value={youtubeURL}
           onChange={(e) => setYoutubeURL(e.target.value)}
         />
@@ -115,7 +94,7 @@ function App() {
 
       {summary && (
         <div className="summary">
-          <h2>📝 Summary</h2>
+          <h3>Summary</h3>
           <p>{summary}</p>
         </div>
       )}
